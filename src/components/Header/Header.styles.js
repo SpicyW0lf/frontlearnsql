@@ -19,5 +19,8 @@ export default (theme) => ({
         width: '210px',
         position: 'relative',
         top: '2px',
+    },
+    panels: {
+        marginLeft: '20px',
     }
 });

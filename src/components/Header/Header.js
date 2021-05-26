@@ -12,9 +12,9 @@ function Header(props) {
         <AppBar position="fixed" className={classes.header}>
             <Toolbar>
                 <img src={logo} className={classes.logo} />
-                <Typography> Курсы </Typography>
-                <Typography> Задания </Typography>
-                <Typography> Базы данных </Typography>
+                <Typography className={classes.panels}> Курсы </Typography>
+                <Typography className={classes.panels}> Задания </Typography>
+                <Typography className={classes.panels}> Базы данных </Typography>
             </Toolbar>
         </AppBar>
     )

@@ -15,11 +15,14 @@ class Home extends React.Component {
     }
 
     componentDidMount() {
+        console.log('Privet');
         API.get('api/courses')
             .then(res => {
                 const courses = res.data.results;
-                this.setState({ courses })
-            })
+                this.setState({
+                    courses: courses,
+                })
+            });
     }
 
     render() {

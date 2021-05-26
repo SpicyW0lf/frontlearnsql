@@ -12,7 +12,7 @@ export default () => (
     <Router>
         <Layout>
             <Switch>
-                <Route path={routerService.getCoursesRoute()}>
+                <Route path={'/'}>
                     <Home />
                 </Route>
             </Switch>
