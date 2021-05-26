@@ -1,7 +1,5 @@
 let routerServiceInstance = null;
 
-const SIGN_IN = 'sign-in';
-const SIGN_UP = 'sign-up';
 const COURSES = 'courses';
 const BD = 'bd';
 const MATERIALS = 'materials';
@@ -16,14 +14,6 @@ export default class RouterService {
         }
 
         return routerServiceInstance;
-    }
-
-    getSignInRoute = () => {
-        return SEPARATOR + SIGN_IN;
-    }
-
-    getSignUpRoute = () => {
-        return SEPARATOR + SIGN_UP;
     }
 
     getCoursesRoute = () => {
@@ -43,4 +33,4 @@ export default class RouterService {
     }
 }
 
-export const appRouter =RouterService.factory();
+export const appRouter = RouterService.factory();
