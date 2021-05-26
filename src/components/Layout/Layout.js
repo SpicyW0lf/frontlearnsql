@@ -3,7 +3,7 @@ import React from 'react';
 import {MuiThemeProvider} from '@material-ui/core/styles';
 import withStyles from '@material-ui/core/styles/withStyles';
 
-import Header from '../components/Header';
+import Header from '../Header';
 
 import theme from './themeMaterialUi';
 

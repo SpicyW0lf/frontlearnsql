@@ -1,11 +1,9 @@
 import React from 'react';
-import {Provider} from "react-redux";
 
 
-function App() {
-  return (
+import Routers from './routes';
 
-  );
-}
 
-export default App;
+export default () => (
+    <Routers />
+)
