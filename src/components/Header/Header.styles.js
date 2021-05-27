@@ -22,5 +22,7 @@ export default (theme) => ({
     },
     panels: {
         marginLeft: '20px',
+        color: 'white',
+        textDecoration: 'none',
     }
 });

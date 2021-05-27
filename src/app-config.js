@@ -1,5 +1,5 @@
 export default {
     getApiBasePath() {
-        return 'https://learnsql.ru'
+        return 'http://62.109.28.95:8001'
     },
 };

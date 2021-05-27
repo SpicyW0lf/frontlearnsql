@@ -1,5 +1,5 @@
 import React from "react";
-import API from '../../service/API';
+import API, {config} from '../../service/API';
 
 import Card from '@material-ui/core/Card';
 import styles from './styles';
@@ -15,8 +15,7 @@ class Home extends React.Component {
     }
 
     componentDidMount() {
-        console.log('Privet');
-        API.get('api/courses')
+        API.get('api/courses', config)
             .then(res => {
                 const courses = res.data.results;
                 this.setState({
@@ -28,6 +27,7 @@ class Home extends React.Component {
     render() {
         const {classes} = this.props;
         const courses = this.state.courses;
+        console.log(this.state.courses[1]);
         return (
             <div className={classes.root}>
                 {courses.map(course => {
