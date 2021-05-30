@@ -24,6 +24,10 @@ export default class UserService {
         return this.isAuth;
     }
 
+    match = (user, passw) => {
+        return user === this.username && passw === this.password;
+    }
+
     logout = () => {
         this.isAuth = false;
     }

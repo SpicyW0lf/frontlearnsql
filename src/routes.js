@@ -7,6 +7,7 @@ import Tasks from './components/Tasks';
 import BDs from "./components/BDs";
 
 import RouterService from "./service/router-service";
+import Signin from "./components/SignIn/Signin";
 
 
 const routerService = RouterService.factory();
@@ -15,6 +16,9 @@ export default () => (
     <Router>
         <Layout>
                 <Switch>
+                    <Route exact path={routerService.getSignInRoute()}>
+                        <Signin />
+                    </Route>
                 <Route exact path={'/'}>
                     <Home />
                 </Route>

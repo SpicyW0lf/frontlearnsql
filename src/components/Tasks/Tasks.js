@@ -1,4 +1,5 @@
 import React from "react";
+import {Redirect} from "react-router";
 import API, {config} from '../../service/API';
 
 import Card from '@material-ui/core/Card';
@@ -8,6 +9,11 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import {Button, CardContent, Typography} from "@material-ui/core";
 import AddModal from "./addModal";
 import UpdModal from "./updModal";
+
+import UserService from "../../service/user-service";
+import {appRouter} from "../../service/router-service";
+
+const userService = UserService.factory();
 
 class Tasks extends React.Component {
     constructor(props) {
@@ -129,6 +135,7 @@ class Tasks extends React.Component {
     }
 
     render() {
+        if (!userService.isAuth) return <Redirect to={appRouter.getSignInRoute()} />;
         const {classes} = this.props;
         const tasks = this.filtired || this.state.tasks;
 

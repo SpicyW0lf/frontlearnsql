@@ -3,18 +3,34 @@ import logo from './logo.svg';
 import styles from './Header.styles';
 
 import withStyles from '@material-ui/core/styles/withStyles';
-import {AppBar, Toolbar, Typography} from "@material-ui/core";
+import {AppBar, Button, Toolbar, Typography} from "@material-ui/core";
 
 import {appRouter} from "../../service/router-service";
-import {Link} from "react-router-dom";
+import {Link, Redirect} from "react-router-dom";
+import UserService from "../../service/user-service";
 
-function Header(props) {
-    const { classes } = props;
+const userService = UserService.factory();
 
+class Header extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {auth: true}
+    }
+
+    Handler = () => {
+        if (userService.isUserAuth()) userService.logout();
+
+        this.setState({
+            auth: !this.state.auth,
+        })
+    }
+
+    render() {
+    const { classes } = this.props;
     return (
         <AppBar position="fixed" className={classes.header}>
             <Toolbar>
-                <img src={logo} className={classes.logo} />
+                <img src={logo} className={classes.logo}/>
                 <Link to={appRouter.getCoursesRoute()}>
                     <Typography className={classes.panels}> Курсы </Typography>
                 </Link>
@@ -24,10 +40,24 @@ function Header(props) {
                 <Link to={appRouter.getBdRoute()}>
                     <Typography className={classes.panels}> Базы данных </Typography>
                 </Link>
-
+                <Button
+                    onClick={this.Handler}
+                    style={{
+                        backgroundColor: 'orange',
+                        color: 'white',
+                        marginBottom: '20px',
+                        position: 'absolute',
+                        right: '5rem',
+                        top: '1rem'
+                    }}
+                >
+                    Выйти
+                </Button>
             </Toolbar>
+            {!userService.isUserAuth() && <Redirect to={appRouter.getSignInRoute()} />}
         </AppBar>
     )
+}
 }
 
 export default withStyles(styles)(Header);

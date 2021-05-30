@@ -1,6 +1,5 @@
 import React from 'react';
 import {Redirect} from "react-router";
-import {Link} from 'react-router-dom';
 
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
@@ -13,46 +12,68 @@ import styles from './SignIn.styles';
 
 const userService = UserService.factory();
 
-class SignIn extends React.PureComponent{
-    componentWillUnmount() {
-        this.props.actions.signInPageDown();
+class SignIn extends React.Component{
+    constructor(props) {
+        super(props);
+        this.state = {
+            login: '',
+            password: '',
+            disable: true,
+        }
     }
 
     changeLogin = (e) => {
-        this.props.actions.signInChangeField({destination: Enum.USERNAME_FIELD, value: get(e, 'target.value', '')})
+        this.setState({
+            login: e.target.value,
+            disable: false,
+        })
+        if (e.target.value.length) this.setState({disable: true});
     };
 
     changePassword = (e) => {
-        this.props.actions.signInChangeField({destination: Enum.PASSWORD_FIELD, value: get(e, 'target.value', '')})
+        this.setState({
+            password: e.target.value,
+            disable: false,
+        })
+        if (e.target.value.length) this.setState({disable: true});
     };
 
-    signIn(password, username){
-
+    signIn(username, password){
+        if (userService.match(username, password)) {
+            userService.setAuth();
+        } else {
+            alert("Не удалось войти!");
+        }
+        this.setState({
+            auth: 'YOS!',
+        })
     };
 
     render() {
-        const {classes, disableButton} = this.props;
+        const {classes} = this.props;
         const isAuth = userService.isUserAuth();
 
-        if (isAuth) return <Redirect to={appRouter.getHomeRoute()} />;
+        if (isAuth) return <Redirect to={appRouter.getCoursesRoute()} />;
 
         return(
             <div className={classes.root}>
                 <div className={classes.form}>
                     <TextField label="Логин"
                                className={classes.textField}
+                               value={this.state.login}
                                onChange={this.changeLogin}
                     />
                     <TextField label="Пароль"
                                className={classes.textField}
                                type="password"
+                               value={this.state.password}
                                onChange={this.changePassword}
                     />
                     <Button color="primary"
                             variant="contained"
                             className={classes.button}
-                            disabled={disableButton}
-                            onClick={this.clickButtonHandler}
+                            disabled={!this.state.disable}
+                            onClick={ () => this.signIn(this.state.login, this.state.password)}
                     >
                         Войти
                     </Button>

@@ -1,10 +1,16 @@
 import React from "react";
 import API, {config} from '../../service/API';
+import {Redirect} from "react-router";
 
 import Card from '@material-ui/core/Card';
 import styles from './styles';
 import withStyles from "@material-ui/core/styles/withStyles";
 import {CardContent, Typography} from "@material-ui/core";
+
+import UserService from "../../service/user-service";
+import {appRouter} from "../../service/router-service";
+
+const userService = UserService.factory();
 
 class Home extends React.Component {
     constructor(props) {
@@ -25,6 +31,7 @@ class Home extends React.Component {
     }
 
     render() {
+        if (!userService.isAuth) return <Redirect to={appRouter.getSignInRoute()} />;
         const {classes} = this.props;
         const courses = this.state.courses;
         console.log(this.state.courses[1]);
