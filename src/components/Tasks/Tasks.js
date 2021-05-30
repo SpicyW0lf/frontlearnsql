@@ -25,6 +25,7 @@ class Tasks extends React.Component {
             updModal: false,
         };
         this.filtired = null;
+        this.taskes = [];
     }
 
 
@@ -86,24 +87,19 @@ class Tasks extends React.Component {
     }
 
     componentDidMount() {
-        let taski = [];
         API.get(`/api/tasks_for_petrov/`, config)
             .then(res => {
-                taski = res.data.results;
+                this.taskes = res.data.results;
                 this.setState({
-                    tasks: taski,
+                    tasks: this.taskes,
                 })
             });
     }
 
     getTasks = () => {
-        let taski = [];
         API.get(`/api/tasks_for_petrov/`, config)
             .then(res => {
-                taski = res.data.results;
-                this.setState({
-                    tasks: taski,
-                })
+                this.taskes = res.data.results;
             });
     }
 
@@ -120,8 +116,7 @@ class Tasks extends React.Component {
     onSearchHandler = (e) => {
         this.getTasks();
         const text = e.target.value.toLowerCase() || '';
-        console.log(text);
-        const tasks = this.state.tasks;
+        const tasks = this.taskes;
 
         this.filtired = tasks.filter((el, index) => {
             const tit = el.title.toLowerCase();
