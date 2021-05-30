@@ -1,5 +1,5 @@
 import React from "react";
-import API from '../../service/API';
+import API, {config} from '../../service/API';
 
 import Card from '@material-ui/core/Card';
 import styles from './styles';
@@ -16,15 +16,13 @@ class BDs extends React.Component {
 
     componentDidMount() {
         let bdi = [];
-        for (let i = 1; i < 6; i++) {
-            API.get(`/api/databases/${i}/`)
+            API.get(`/api/databases/`, config)
                 .then(res => {
-                    bdi.push(res.data);
+                    bdi = res.data.results;
                     this.setState({
                         bds: bdi,
                     })
                 })
-        }
     }
 
     render() {
