@@ -23,13 +23,16 @@ class BDs extends React.Component {
 
     componentDidMount() {
         let bdi = [];
-            API.get(`/api/databases/`, config)
-                .then(res => {
-                    bdi = res.data.results;
-                    this.setState({
-                        bds: bdi,
+            for (let i = 0; i < 6; i++) {
+                API.get(`/api/databases/${i}/`, config)
+                    .then(res => {
+                        bdi.push(res.data);
+                        this.setState({
+                            bds: bdi,
+                        })
                     })
-                })
+            }
+
     }
 
     render() {
