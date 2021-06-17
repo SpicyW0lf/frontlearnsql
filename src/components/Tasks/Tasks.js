@@ -36,6 +36,14 @@ import {Delete} from "@material-ui/icons";
 const userService = UserService.factory();
 let filtired = null;
 let taskes = [];
+let databases = {};
+const difficulty = {
+    1: "Очень просто",
+    2: "Легко",
+    3: "Средний уровень",
+    4: "Трудно",
+    5: "Очень сложно",
+}
 const headCells = [
     {id: 'id', numeric: false, disablePadding: false, label: 'Id'},
     {id: 'title', numeric: true, disablePadding: true, label: 'Title'},
@@ -197,13 +205,7 @@ const AllToolBar = (props) => {
                         <DeleteIcon onClick={onDeleteClick} />
                     </IconButton>
                 </Tooltip>
-            ) : (
-                <Tooltip title="FilterList">
-                    <IconButton aria-label="filter list">
-                        <FilterListIcon />
-                    </IconButton>
-                </Tooltip>
-            )}
+            ) : null}
         </Toolbar>
     );
 };
@@ -232,6 +234,19 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
+const getDatabases = () => {
+    let dbs;
+
+    API.get(`/api/databases/`, config)
+        .then(res => {
+            console.log(res.data.results);
+            dbs = res.data.results;
+            dbs.forEach((el) => {
+                databases[`${el.id}`] = el.title;
+            })
+        });
+}
+
 export default function Tasks(props) {
     const classes = useStyles();
 
@@ -245,6 +260,7 @@ export default function Tasks(props) {
     const [updated, setUpdated] = useState(false);
 
     const taski = filtired || tasks;
+    getDatabases();
 
     useEffect(() => {
         API.get(`/api/tasks_for_petrov/`, config)
@@ -260,6 +276,7 @@ export default function Tasks(props) {
         setOrder(isAsc ? 'desc' : 'asc');
         setOrderBy(property);
     };
+
 
     const handleDeleteClick = () => {
         let undeleted = [];
@@ -284,14 +301,12 @@ export default function Tasks(props) {
                     .then(res => {
                         undeleted.push(null);
                         if (undeleted.length === selected.length) {
-                            console.log('Privet');
                             fetchEnd();
                         }
                     })
                     .catch((error) => {
                         undeleted.push(el);
                         if (undeleted.length === selected.length) {
-                            console.log('Privet');
                             fetchEnd();
                         }
                 });
@@ -420,8 +435,8 @@ export default function Tasks(props) {
                                                 {task.id}
                                             </TableCell>
                                             <TableCell align="right">{task.title}</TableCell>
-                                            <TableCell align="right">{task.sandbox_db}</TableCell>
-                                            <TableCell align="right">{task.difficulty}</TableCell>
+                                            <TableCell align="right">{databases[task.sandbox_db]}</TableCell>
+                                            <TableCell align="right">{difficulty[task.difficulty]}</TableCell>
                                         </TableRow>
                                     )
                                 })
