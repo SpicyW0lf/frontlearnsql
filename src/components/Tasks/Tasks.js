@@ -220,6 +220,12 @@ const useStyles = makeStyles((theme) => ({
         gridTemplateColumns: "5fr 1fr",
         gridGap: "0 30px"
     },
+    selectedFilter: {
+        textDecoration: 'none',
+        color: 'black',
+        marginTop: '10px',
+        backgroundColor: 'blue',
+    },
     aFilters: {
         textDecoration: 'none',
         color: 'black',
@@ -262,7 +268,6 @@ const getDatabases = () => {
 
     API.get(`/api/databases/`, config)
         .then(res => {
-            console.log(res.data.results);
             dbs = res.data.results;
             dbs.forEach((el) => {
                 databases[`${el.id}`] = el.title;
@@ -437,6 +442,8 @@ export default function Tasks(props) {
                 isOpened={addModal}
                 onModalClose={() => {setAddModal(false)}}
                 onSubmitModal={onSubmitAddModal}
+                Difficulty={filtDif}
+                Databases={filtDat}
             />
             <UpdModal
                 title={'Измените задание'}
@@ -511,7 +518,7 @@ export default function Tasks(props) {
                                     <a
                                        href={el[0]}
                                        title={el[1]}
-                                       className={classes.aFilters}
+                                       className={ classes.aFilters}
                                        onClick={(e) => {
                                            handleFilterClick(e, 'dat');
                                            setTasks(filtired);
