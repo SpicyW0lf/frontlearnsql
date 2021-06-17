@@ -36,8 +36,9 @@ import {Delete} from "@material-ui/icons";
 const userService = UserService.factory();
 let filtired = null;
 let taskes = [];
-let databases = {};
+let databases = {0: "Все",};
 const difficulty = {
+    0: "Все",
     1: "Очень просто",
     2: "Легко",
     3: "Средний уровень",
@@ -123,7 +124,7 @@ function AllTableHead(props) {
     };
 
     return (
-        <TableHead>
+        <TableHead className={classes.tHead}>
             <TableRow>
                 <TableCell padding="checkbox">
                     <Checkbox
@@ -214,12 +215,34 @@ const useStyles = makeStyles((theme) => ({
     root: {
         width: '100%',
     },
+    allTable: {
+        display: "grid",
+        gridTemplateColumns: "5fr 1fr",
+        gridGap: "0 30px"
+    },
+    aFilters: {
+        textDecoration: 'none',
+        color: 'black',
+        marginTop: '10px',
+    },
+    card: {
+        gridColumn: '2/3',
+        gridRow: '1/3',
+        height: 'fit-content',
+        padding: '10px',
+    },
+    tHead: {
+        gridColumn: '1/2',
+        gridRow: '1/2',
+    },
     paper: {
         width: '100%',
         marginBottom: theme.spacing(2),
     },
     table: {
         minWidth: 750,
+        gridColumn: '1/2',
+        gridRow: '2/3',
     },
     visuallyHidden: {
         border: 0,
@@ -261,6 +284,14 @@ export default function Tasks(props) {
 
     const taski = filtired || tasks;
     getDatabases();
+    let filtDat = [];
+    let filtDif = [];
+    for (let key in databases) {
+        filtDat.push([databases[key], key]);
+    }
+    for (let key in difficulty) {
+        filtDif.push([difficulty[key], key]);
+    }
 
     useEffect(() => {
         API.get(`/api/tasks_for_petrov/`, config)
@@ -328,6 +359,29 @@ export default function Tasks(props) {
         setUpdated(!updated);
     };
 
+    const handleFilterClick = (event, fil) => {
+        getTasks();
+        event.preventDefault();
+        const dbId = event.target.title;
+        const tasks = taskes;
+        if (dbId == 0) {
+            console.log(dbId);
+            filtired = tasks.slice();
+            setUpdated(!updated);
+            return;
+        }
+        filtired = tasks.filter((el, index) => {
+            let tit;
+            if (fil === 'dat') {
+                tit = el.sandbox_db;
+            } else {
+                tit = el.difficulty;
+            }
+            return tit == dbId;
+        })
+        setUpdated(!updated);
+    }
+
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
             const newSelecteds = taski.map((n) => n.id);
@@ -391,6 +445,7 @@ export default function Tasks(props) {
                 onModalClose={() => {setUpdModal(false)}}
                 onSubmitModal={onSubmitUpdModal}
             />
+            <div className={classes.allTable}>
             <Paper className={classes.paper}>
                 <AllToolBar numSelected={selected.length} onDeleteClick={handleDeleteClick}/>
                 <TableContainer>
@@ -445,6 +500,52 @@ export default function Tasks(props) {
                     </Table>
                 </TableContainer>
             </Paper>
+                <Card className={classes.card}>
+                    <h3>Фильтры</h3>
+                    <CardContent>
+                        <h4>sandbox_db</h4>
+                        <ul style={{listStyle: 'none', padding: '0',}}>
+                        {filtDat.map((el, index) => {
+                            return (
+                                <li>
+                                    <a
+                                       href={el[0]}
+                                       title={el[1]}
+                                       className={classes.aFilters}
+                                       onClick={(e) => {
+                                           handleFilterClick(e, 'dat');
+                                           setTasks(filtired);
+                                       }}
+                                    >
+                                    {el[0]}
+                                    </a>
+                                </li>
+                            )
+                        })}
+                        </ul>
+                        <h4>difficulty</h4>
+                        <ul style={{listStyle: 'none', padding: '0',}}>
+                            {filtDif.map((el, index) => {
+                                return (
+                                    <li>
+                                        <a
+                                            href={el[0]}
+                                            title={el[1]}
+                                            className={classes.aFilters}
+                                            onClick={(e) => {
+                                                handleFilterClick(e, 'dif');
+                                                setTasks(filtired);
+                                            }}
+                                        >
+                                            {el[0]}
+                                        </a>
+                                    </li>
+                                )
+                            })}
+                        </ul>
+                    </CardContent>
+                </Card>
+            </div>
         </div>
     )
 }
