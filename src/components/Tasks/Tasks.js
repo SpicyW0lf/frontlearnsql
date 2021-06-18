@@ -8,7 +8,7 @@ import Card from '@material-ui/core/Card';
 import styles from './styles';
 import './modalStyle.css';
 import withStyles from "@material-ui/core/styles/withStyles";
-import {Button, CardContent, lighten, makeStyles, Typography} from "@material-ui/core";
+import {Button, CardContent, Icon, lighten, makeStyles, Typography} from "@material-ui/core";
 import AddModal from "./addModal";
 import UpdModal from "./updModal";
 import Table from '@material-ui/core/Table';
@@ -27,6 +27,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
+import CreateIcon from '@material-ui/icons/Create';
 
 
 import UserService from "../../service/user-service";
@@ -78,23 +79,6 @@ const stableSort = (array, comparator) => {
     });
 
     return stableizedThis.map((el) => el[0]);
-}
-
-const onSubmitUpdModal = (task) => {
-    const formData = new FormData();
-    formData.append('id', task.taskId);
-    formData.append('title', task.taskName);
-    formData.append('task_text', task.taskText);
-    formData.append('reference_solution', task.taskSolution);
-    formData.append('sandbox_db', task.taskBd);
-    formData.append('owner', 1);
-
-    API.put(`/api/tasks_for_petrov/${task.taskId}/`, formData, config)
-        .then(res => {
-            alert('Задание успешно изменено!');
-            //Здесь вызывали маунт
-        })
-        .catch(error => alert('Не удалось изменить задание!'));
 }
 
 const getTasks = () => {
@@ -182,7 +166,7 @@ const useToolbarStyles = makeStyles((theme) => ({
 
 const AllToolBar = (props) => {
     const classes = useToolbarStyles();
-    const { numSelected, onDeleteClick } = props;
+    const { numSelected, onDeleteClick, onUpdateClick } = props;
 
     return (
         <Toolbar
@@ -199,7 +183,13 @@ const AllToolBar = (props) => {
                     Tasks
                 </Typography>
             )}
-
+            {numSelected == 1 ? (
+                <Tooltip title="Change">
+                    <IconButton aria-label="change">
+                        <CreateIcon onClick={onUpdateClick} />
+                    </IconButton>
+                </Tooltip>
+            ) : null}
             {numSelected > 0 ? (
                 <Tooltip title="Delete">
                     <IconButton aria-label="delete">
@@ -275,6 +265,8 @@ const getDatabases = () => {
         });
 }
 
+getDatabases();
+
 export default function Tasks(props) {
     const classes = useStyles();
 
@@ -288,7 +280,6 @@ export default function Tasks(props) {
     const [updated, setUpdated] = useState(false);
 
     const taski = filtired || tasks;
-    getDatabases();
     let filtDat = [];
     let filtDif = [];
     for (let key in databases) {
@@ -313,6 +304,14 @@ export default function Tasks(props) {
         setOrderBy(property);
     };
 
+    const handleChangeClick = () => {
+        taski.forEach((el) => {
+            if (el.id == selected[0]) {
+                setTask(el);
+            }
+        });
+        setUpdModal(true);
+    }
 
     const handleDeleteClick = () => {
         let undeleted = [];
@@ -349,12 +348,13 @@ export default function Tasks(props) {
         });
     };
 
-    const onSubmitAddModal = (task) => {
+    const onSubmitAddModal = (tasker) => {
         const formData = new FormData();
-        formData.append('title', task.taskName);
-        formData.append('reference_solution', task.taskSolution);
-        formData.append('task_text', task.taskText);
-        formData.append('sandbox_db', task.taskBd);
+        formData.append('title', tasker.taskName);
+        formData.append('reference_solution', tasker.taskSolution);
+        formData.append('task_text', tasker.taskText);
+        formData.append('sandbox_db', tasker.sandbox_db);
+        formData.append('difficulty', tasker.difficulty);
         formData.append('owner', 1);
         API.post('/api/tasks_for_petrov/', formData, config)
             .then(res => {
@@ -363,6 +363,27 @@ export default function Tasks(props) {
             .catch(error => alert('Не удалось добавить задание!'));
         setUpdated(!updated);
     };
+
+    const onSubmitUpdModal = (task) => {
+        console.log(task);
+        const formData = new FormData();
+        formData.append('id', task.taskId);
+        formData.append('title', task.taskName);
+        formData.append('task_text', task.taskText);
+        formData.append('reference_solution', task.taskSolution);
+        formData.append('sandbox_db', task.taskBd);
+        formData.append('difficulty', task.taskDif);
+        formData.append('owner', 1);
+
+        /*API.put(`/api/tasks_for_petrov/${task.taskId}/`, formData, config)
+            .then(res => {
+                alert('Задание успешно изменено!');
+                //Здесь вызывали маунт
+            })
+            .catch(error => alert('Не удалось изменить задание!'));*/
+        alert('Задание успешно изменено!');
+        setUpdated(!updated);
+    }
 
     const handleFilterClick = (event, fil) => {
         getTasks();
@@ -449,12 +470,14 @@ export default function Tasks(props) {
                 title={'Измените задание'}
                 prevTask={task}
                 isOpened={updModal}
+                Difficulty={filtDif}
+                Databases={filtDat}
                 onModalClose={() => {setUpdModal(false)}}
                 onSubmitModal={onSubmitUpdModal}
             />
             <div className={classes.allTable}>
             <Paper className={classes.paper}>
-                <AllToolBar numSelected={selected.length} onDeleteClick={handleDeleteClick}/>
+                <AllToolBar numSelected={selected.length} onDeleteClick={handleDeleteClick} onUpdateClick={handleChangeClick}/>
                 <TableContainer>
                     <Table
                         className={classes.table}
@@ -514,7 +537,7 @@ export default function Tasks(props) {
                         <ul style={{listStyle: 'none', padding: '0',}}>
                         {filtDat.map((el, index) => {
                             return (
-                                <li>
+                                <li key={el[1]}>
                                     <a
                                        href={el[0]}
                                        title={el[1]}
@@ -534,7 +557,7 @@ export default function Tasks(props) {
                         <ul style={{listStyle: 'none', padding: '0',}}>
                             {filtDif.map((el, index) => {
                                 return (
-                                    <li>
+                                    <li key={el[1]}>
                                         <a
                                             href={el[0]}
                                             title={el[1]}

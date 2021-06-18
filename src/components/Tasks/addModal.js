@@ -3,8 +3,9 @@ import './modalStyle.css';
 import {FormControl, InputLabel, MenuItem, Select} from "@material-ui/core";
 
 
+let task = {};
+
 function AddModal(props) {
-        let task = {};
         const [ errors, setErrors ] = useState({
             taskName: false,
             taskText: false,
@@ -14,6 +15,7 @@ function AddModal(props) {
         });
         const [ dif, setDif ] = useState('');
         const [ dat, setDat ] = useState('');
+        console.log(dif);
 
     const onSubmitForm = (event) => {
         setErrors({
@@ -104,7 +106,7 @@ function AddModal(props) {
                                 >
                                 {Databases.map((el) => {
                                     return (
-                                        <MenuItem value={el[1]}>{el[0]}</MenuItem>
+                                        <MenuItem value={el[1]} key={el[0]}>{el[0]}</MenuItem>
                                     )
                                 })}
                             </Select>
@@ -120,7 +122,7 @@ function AddModal(props) {
                                 >
                                 {Difficulty.map((el) => {
                                     return (
-                                        <MenuItem value={el[1]}>{el[0]}</MenuItem>
+                                        <MenuItem value={el[1]} key={el[0]}>{el[0]}</MenuItem>
                                     )
                                 })}
                             </Select>
